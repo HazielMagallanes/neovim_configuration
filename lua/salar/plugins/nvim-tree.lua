@@ -30,8 +30,9 @@ return {
       git = { enable = false },
       on_attach = function(bufnr)
         local api = require("nvim-tree.api")
+        api.config.mappings.default_on_attach(bufnr)
         local function opts(desc)
-          return { desc = desc, buffer = bufnr, nowait = true }
+          return { desc = desc, buffer = bufnr }
         end
         vim.keymap.set("n", "zr", api.tree.change_root_to_node,   opts("Focus folder as root"))
         vim.keymap.set("n", "F",  api.tree.change_root_to_parent, opts("Go to parent folder"))
