@@ -28,6 +28,14 @@ return {
         highlight_opened_files = "all",
       },
       git = { enable = false },
+      on_attach = function(bufnr)
+        local api = require("nvim-tree.api")
+        local function opts(desc)
+          return { desc = desc, buffer = bufnr, nowait = true }
+        end
+        vim.keymap.set("n", "zr", api.tree.change_root_to_node,   opts("Focus folder as root"))
+        vim.keymap.set("n", "F",  api.tree.change_root_to_parent, opts("Go to parent folder"))
+      end,
       tab = {
         sync = {
           open = false,

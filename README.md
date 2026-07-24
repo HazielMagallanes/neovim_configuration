@@ -106,6 +106,7 @@ neovim_configuration/
 | `<leader>ts` | Select theme |
 | `<leader>tn` | Next theme |
 | `<leader>tp` | Previous theme |
+| `<leader>gg` | Open LazyGit (floating) |
 | `Esc` (terminal) | Return to normal mode |
 
 ### Theme System (17 themes, ~70+ variants)
@@ -147,12 +148,12 @@ neovim_configuration/
 | **drop.nvim** | Dashboard animation effects |
 | **bufferline** | Buffer tab bar — thin separators, auto-syncs highlight groups with colorscheme changes |
 | **lualine** | Statusline — shows git branch, diagnostics, lazy.nvim update count, encoding, fileformat, filetype |
-| **nvim-tree** | Left sidebar file explorer (width 35), follows focused file, `Ctrl+n` toggle, `<leader>e` focus |
+| **nvim-tree** | Left sidebar file explorer (width 35), follows focused file, `Ctrl+n` toggle, `<leader>e` focus. Inside tree: `zr` focus folder as root, `F` go to parent |
 | **satellite.nvim** | Scrollbar |
 
 | **dressing.nvim** | Improved `vim.ui.select/input` UIs |
 | **nvim-colorizer** | Inline color code highlighting (#hex, rgb) |
-| **render-markdown** | Live markdown rendering (Neovim <0.12 only, Obsidian preset) |
+| **render-markdown** | Live markdown rendering (Obsidian preset) |
 | **presence.nvim** | Discord Rich Presence with Neovim logo and elapsed time |
 | **rndr.nvim** | Custom 3D model viewer. Auto-opens preview on `BufReadPost`, supersample=2. Controls: `h/j/k/l` rotate, `0` reset, `R` rerender, `q` close |
 
