@@ -3,43 +3,20 @@ return {
 	version = "*",
 	lazy = true,
 	event = { "BufReadPre *.md", "BufNewFile *.md" },
-	cmd = {
-		"ObsidianBacklinks",
-		"ObsidianDailies",
-		"ObsidianExtractNote",
-		"ObsidianFollowLink",
-		"ObsidianLink",
-		"ObsidianLinkNew",
-		"ObsidianLinks",
-		"ObsidianNew",
-		"ObsidianNewFromTemplate",
-		"ObsidianOpen",
-		"ObsidianPasteImg",
-		"ObsidianQuickSwitch",
-		"ObsidianRename",
-		"ObsidianSearch",
-		"ObsidianTags",
-		"ObsidianTemplate",
-		"ObsidianToday",
-		"ObsidianToggleCheckbox",
-		"ObsidianTomorrow",
-		"ObsidianTOC",
-		"ObsidianYesterday",
-	},
+	cmd = { "Obsidian" },
 	keys = {
-		{ "<leader>ob", "<cmd>ObsidianBacklinks<CR>", desc = "Obsidian backlinks" },
-		{ "<leader>od", "<cmd>ObsidianToday<CR>", desc = "Obsidian daily note" },
-		{ "<leader>ol", "<cmd>ObsidianLinks<CR>", desc = "Obsidian note links" },
-		{ "<leader>oo", "<cmd>ObsidianOpen<CR>", desc = "Open in Obsidian" },
-		{ "<leader>oq", "<cmd>ObsidianQuickSwitch<CR>", desc = "Obsidian quick switch" },
-		{ "<leader>os", "<cmd>ObsidianSearch<CR>", desc = "Search Obsidian notes" },
-		{ "<leader>ot", "<cmd>ObsidianTemplate<CR>", desc = "Insert Obsidian template" },
-		{ "<leader>oT", "<cmd>ObsidianTOC<CR>", desc = "Obsidian table of contents" },
+		{ "<leader>ob", "<cmd>Obsidian backlinks<CR>", desc = "Obsidian backlinks" },
+		{ "<leader>od", "<cmd>Obsidian today<CR>", desc = "Obsidian daily note" },
+		{ "<leader>ol", "<cmd>Obsidian links<CR>", desc = "Obsidian note links" },
+		{ "<leader>oo", "<cmd>Obsidian open<CR>", desc = "Open in Obsidian" },
+		{ "<leader>oq", "<cmd>Obsidian quick-switch<CR>", desc = "Obsidian quick switch" },
+		{ "<leader>os", "<cmd>Obsidian search<CR>", desc = "Search Obsidian notes" },
+		{ "<leader>ot", "<cmd>Obsidian template<CR>", desc = "Insert Obsidian template" },
+		{ "<leader>oT", "<cmd>Obsidian toc<CR>", desc = "Obsidian table of contents" },
 	},
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-telescope/telescope.nvim",
-		"hrsh7th/nvim-cmp",
 	},
 	init = function()
 		local group = vim.api.nvim_create_augroup("salar-obsidian-markdown", { clear = true })
@@ -60,7 +37,27 @@ return {
 		return require("salar.core.obsidian").opts()
 	end,
 	config = function(_, opts)
+		if vim.tbl_isempty(opts.workspaces) then
+			vim.notify(
+				"Obsidian.nvim skipped: no valid vaults found. "
+					.. "Set $OBSIDIAN_VAULT_PERSONAL or open a file inside a vault.",
+				vim.log.levels.WARN
+			)
+			return
+		end
+
 		require("obsidian").setup(opts)
 		require("salar.core.obsidian").patch_template_substitutions()
+
+		vim.api.nvim_create_autocmd("FileType", {
+			group = vim.api.nvim_create_augroup("salar-obsidian-keymaps", { clear = true }),
+			pattern = "markdown",
+			callback = function(args)
+				if vim.bo[args.buf].buftype ~= "" then
+					return
+				end
+				require("salar.core.obsidian").setup_buffer_keymaps(args.buf)
+			end,
+		})
 	end,
 }

@@ -78,15 +78,6 @@ local function slugify(text)
 	return slug
 end
 
-local function open_with_system(path)
-	if vim.ui.open then
-		vim.ui.open(path)
-		return
-	end
-
-	vim.fn.jobstart({ "xdg-open", path }, { detach = true })
-end
-
 local function find_daily_template(workspaces)
 	for _, workspace in ipairs(workspaces) do
 		if type(workspace.path) == "string" then
@@ -215,6 +206,22 @@ function M.setup_markdown_buffer(bufnr)
 	end)
 end
 
+function M.setup_buffer_keymaps(bufnr)
+	local opts = { buffer = bufnr, silent = true }
+
+	vim.keymap.set("n", "gf", function()
+		return require("obsidian").util.gf_passthrough()
+	end, vim.tbl_extend("force", opts, { noremap = false, expr = true }))
+
+	vim.keymap.set("n", "<CR>", function()
+		return require("obsidian").util.smart_action()
+	end, vim.tbl_extend("force", opts, { expr = true }))
+
+	vim.keymap.set("n", "<leader>oc", function()
+		return require("obsidian").util.toggle_checkbox()
+	end, vim.tbl_extend("force", opts, { desc = "Toggle checkbox" }))
+end
+
 function M.workspaces()
 	if type(vim.g.obsidian_workspaces) == "table" and #vim.g.obsidian_workspaces > 0 then
 		local workspaces = {}
@@ -274,14 +281,15 @@ function M.opts()
 		workspaces = workspaces,
 		notes_subdir = "notes",
 		new_notes_location = "notes_subdir",
-		preferred_link_style = "wiki",
-		sort_by = "modified",
-		sort_reversed = true,
-		open_notes_in = "current",
-		completion = {
-			nvim_cmp = true,
-			min_chars = 2,
+		link = {
+			style = "wiki",
 		},
+		search = {
+			sort_by = "modified",
+			sort_reversed = true,
+		},
+		legacy_commands = false,
+		open_notes_in = "current",
 		daily_notes = {
 			folder = "notes/dailies",
 			date_format = "%Y-%m-%d",
@@ -311,44 +319,26 @@ function M.opts()
 
 			return string.format("%s-%s", os.date("%Y%m%d-%H%M"), suffix)
 		end,
-		note_frontmatter_func = function(note)
-			if note.title then
-				note:add_alias(note.title)
-			end
-
-			local out = {
-				id = note.id,
-				aliases = note.aliases,
-				tags = note.tags,
-			}
-
-			if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
-				for key, value in pairs(note.metadata) do
-					out[key] = value
+		frontmatter = {
+			func = function(note)
+				if note.title then
+					note:add_alias(note.title)
 				end
-			end
 
-			return out
-		end,
-		mappings = {
-			["gf"] = {
-				action = function()
-					return require("obsidian").util.gf_passthrough()
-				end,
-				opts = { noremap = false, expr = true, buffer = true },
-			},
-			["<CR>"] = {
-				action = function()
-					return require("obsidian").util.smart_action()
-				end,
-				opts = { buffer = true, expr = true },
-			},
-			["<leader>oc"] = {
-				action = function()
-					return require("obsidian").util.toggle_checkbox()
-				end,
-				opts = { buffer = true, desc = "Toggle checkbox" },
-			},
+				local out = {
+					id = note.id,
+					aliases = note.aliases,
+					tags = note.tags,
+				}
+
+				if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
+					for key, value in pairs(note.metadata) do
+						out[key] = value
+					end
+				end
+
+				return out
+			end,
 		},
 		picker = {
 			name = "telescope.nvim",
@@ -362,13 +352,11 @@ function M.opts()
 			},
 		},
 		attachments = {
-			img_folder = "assets/imgs",
+			folder = "assets/imgs",
 			img_name_func = function()
 				return string.format("%s-", os.date("%Y%m%d-%H%M%S"))
 			end,
 		},
-		follow_url_func = open_with_system,
-		follow_img_func = open_with_system,
 		ui = {
 			enable = false,
 		},
