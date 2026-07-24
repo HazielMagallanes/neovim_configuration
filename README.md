@@ -1,4 +1,4 @@
-# Salar's Neovim Config
+# Salar's Neovim Config - Personal fork thought only for my own use, I'd reccommend you use Salar's repo but fell free to use this one aswell.
 
 ## Architecture
 
