@@ -36,10 +36,5 @@ keymap.set("n", "<leader>ts", "<cmd>Theme<CR>", { desc = "Select theme" })
 keymap.set("n", "<leader>tn", "<cmd>ThemeNext<CR>", { desc = "Next theme" })
 keymap.set("n", "<leader>tp", "<cmd>ThemePrev<CR>", { desc = "Previous theme" })
 
--- lazygit
-keymap.set("n", "<leader>gg", function()
-	Snacks.lazygit()
-end, { desc = "Open LazyGit" })
-
 -- terminal related
 keymap.set("t", "<Esc>", [[<C-\><C-n>]])

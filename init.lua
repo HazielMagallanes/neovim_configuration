@@ -11,4 +11,5 @@ end
 
 vim.lsp.log.set_level(vim.log.levels.ERROR)
 require("salar.core")
+require("hazielm.core")
 require("salar.lazy")

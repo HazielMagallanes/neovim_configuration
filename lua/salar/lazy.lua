@@ -14,6 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	{ import = "salar.plugins" },
 	{ import = "salar.plugins.lsp" },
+	{ import = "hazielm.plugins" },
 }, {
 	change_detection = {
 		notify = false,
